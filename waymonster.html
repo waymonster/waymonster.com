@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>waymonster</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0a1a0f;
+      --bg-card:   #0e2215;
+      --green-mid: #1a4a25;
+      --green-hi:  #2ecc71;
+      --green-dim: #1b7a3f;
+      --text:      #c8f5d8;
+      --muted:     #4a8a62;
+      --scroll-w:  14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Custom Scrollbar ── */
+    ::-webkit-scrollbar               { width: var(--scroll-w); }
+    ::-webkit-scrollbar-track         { background: #071209; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--green-hi) 0%, var(--green-dim) 50%, #0e6b32 100%);
+      border-radius: 0;
+      border: 2px solid #071209;
+      box-shadow: inset 0 0 6px rgba(46,204,113,0.4);
+    }
+    ::-webkit-scrollbar-thumb:hover   { background: var(--green-hi); }
+    ::-webkit-scrollbar-corner        { background: #071209; }
+    * { scrollbar-width: thin; scrollbar-color: var(--green-hi) #071209; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* ── Scanline overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      text-align: center;
+      padding: 28px 0 20px;
+      background: linear-gradient(180deg, #071209 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--green-mid);
+    }
+
+    .site-title {
+      font-family: 'Black Ops One', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      letter-spacing: 0.12em;
+      text-transform: lowercase;
+      color: var(--green-hi);
+      text-shadow:
+        0 0 12px rgba(46,204,113,0.8),
+        0 0 40px rgba(46,204,113,0.35),
+        0 0 80px rgba(46,204,113,0.15);
+      animation: flicker 8s infinite;
+      line-height: 1;
+    }
+
+    @keyframes flicker {
+      0%,94%,96%,98%,100% { opacity: 1; }
+      95%                  { opacity: 0.85; }
+      97%                  { opacity: 0.92; }
+      99%                  { opacity: 0.88; }
+    }
+
+    .header-rule {
+      margin: 14px auto 0;
+      width: 60%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green-hi), transparent);
+      box-shadow: 0 0 8px rgba(46,204,113,0.6);
+    }
+
+    /* ── Main content ── */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+      padding: 52px 0 80px;
+    }
+
+    /* ── Video card ── */
+    .video-card {
+      width: 80%;
+      background: var(--bg-card);
+      border: 1px solid var(--green-mid);
+      box-shadow:
+        0 0 0 1px rgba(46,204,113,0.07),
+        0 4px 32px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(46,204,113,0.08);
+      transition: box-shadow 0.25s ease, border-color 0.25s ease;
+      position: relative;
+    }
+
+    .video-card:hover {
+      border-color: var(--green-dim);
+      box-shadow:
+        0 0 0 1px rgba(46,204,113,0.2),
+        0 8px 48px rgba(0,0,0,0.7),
+        0 0 24px rgba(46,204,113,0.12),
+        inset 0 1px 0 rgba(46,204,113,0.12);
+    }
+
+    /* corner accents */
+    .video-card::before, .video-card::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-color: var(--green-hi);
+      border-style: solid;
+      opacity: 0.7;
+      z-index: 2;
+    }
+    .video-card::before {
+      top: -1px; left: -1px;
+      border-width: 2px 0 0 2px;
+    }
+    .video-card::after {
+      bottom: -1px; right: -1px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .card-inner::before, .card-inner::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-color: var(--green-hi);
+      border-style: solid;
+      opacity: 0.7;
+      z-index: 2;
+    }
+    .card-inner::before {
+      top: -1px; right: -1px;
+      border-width: 2px 2px 0 0;
+    }
+    .card-inner::after {
+      bottom: -1px; left: -1px;
+      border-width: 0 0 2px 2px;
+    }
+    .card-inner { position: relative; }
+
+    /* track label */
+    .track-label {
+      padding: 10px 18px 8px;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--green-mid);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .track-label span.num {
+      color: var(--green-hi);
+      font-size: 0.8rem;
+      text-shadow: 0 0 6px rgba(46,204,113,0.6);
+    }
+    .track-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green-hi);
+      box-shadow: 0 0 6px var(--green-hi);
+      flex-shrink: 0;
+    }
+
+    /* 16:9 responsive embed */
+    .embed-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #000;
+    }
+    .embed-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      border-top: 1px solid var(--green-mid);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 class="site-title">waymonster</h1>
+    <div class="header-rule"></div>
+  </header>
+
+  <main>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">01</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/scBn-kkf9II" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">02</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/YyxRQiI8gyA" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">03</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/SH1LX0tjBtI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">04</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/ayQT1sDyoRw" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">05</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/lKuWbsD3S4E" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">06</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/eA8NIZrMTVI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">07</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/galhVnas3FM" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">08</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/07DQfHyLoqc" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">09</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/e3oDL5lJt_8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">10</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/iw9bbMM89uI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">11</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/micG2PO-GB8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">12</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/jjqFnn0s3MM" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">13</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/bqz52Zk7iI4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">14</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/LPTS6rzT8Kk" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="card-inner">
+        <div class="track-label"><span class="num">15</span><div class="track-dot"></div>now playing</div>
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/nJ1hknjCc6U" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>▸ waymonster ◂ &nbsp;·&nbsp; 15 tracks</footer>
+
+</body>
+</html>
